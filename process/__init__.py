@@ -13,8 +13,6 @@ from database import JobDb
 # Queue initialisation
 q = Queue(connection=Redis())
 q.empty()
-# Database initialisation
-db = JobDb()
 
 def background_process(file):
         PDF_file = secure_filename(file.filename)
@@ -24,6 +22,7 @@ def background_process(file):
         job = Job.fetch(job_id, connection=Redis())
         job_status = job.get_status()
         # Insert the job details into the database
+        db = JobDb()
         db.insert_job(job_id, job_status)
         return(job_id)
 
@@ -57,6 +56,7 @@ def fetch_job(job_id):
         job = Job.fetch(job_id, connection=Redis())
         job_status = job.get_status()
         # Update the job details into the database
+        db = JobDb()
         db.update_job(job_id, job_status)
         # Check whether the job is finshed
         if job.is_finished:
